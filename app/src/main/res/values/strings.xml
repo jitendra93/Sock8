@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Sock8</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="dialog_title">Sensor selection</string>
 </resources>

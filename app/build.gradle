@@ -45,9 +45,13 @@ android {
             option("-Adagger.hilt.android.internal.disableAndroidSuperclassValidation=true")
         }
     }
-}
 
+}
+repositories{
+    maven { url 'https://jitpack.io' }
+}
 dependencies {
+
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.6.0'
@@ -78,4 +82,4 @@ dependencies {
     implementation ('io.socket:socket.io-client:2.0.1') {
         exclude group: 'org.json', module: 'json'
     }
-}
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'}

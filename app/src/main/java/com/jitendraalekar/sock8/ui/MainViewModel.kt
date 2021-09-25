@@ -1,8 +1,6 @@
 package com.jitendraalekar.sock8.ui
 
 import androidx.lifecycle.*
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.jitendraalekar.sock8.data.*
 import com.jitendraalekar.sock8.domain.ConnectSensorDataStreamUseCase
@@ -11,25 +9,18 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.time.Instant
 import javax.inject.Inject
 import com.jitendraalekar.sock8.Result
 import com.jitendraalekar.sock8.domain.SubscribeSensorUseCase
 import com.jitendraalekar.sock8.domain.UnSubscribeSensorUseCase
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.json.JSONObject
 import timber.log.Timber
-import java.lang.Exception
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val dispatcher: CoroutineDispatcher,
     private val repository: SensorRepositoryImpl,
-    private val gson: Gson,
     private val connectSensorDataStreamUseCase: ConnectSensorDataStreamUseCase,
     private val subscribeSensorUseCase: SubscribeSensorUseCase,
     private val unSubscribeSensorUseCase: UnSubscribeSensorUseCase
@@ -43,7 +34,7 @@ class MainViewModel @Inject constructor(
     val sensorsState: LiveData<Map<String, Boolean>> = _sensorsState
 
     var sensorConfigMap: Map<String, SensorConfig>? = null
-
+    var newStreamForSensor : String? = null
     init {
         preload()
     }
@@ -78,27 +69,35 @@ class MainViewModel @Inject constructor(
 
         }
         viewModelScope.launch {
-
-
-            /*    repository.connect {
-                    repository.addListener("data"){
-                        println(it[0].toString())
-                    }
-                }*/
-
+            loadSensorData("")
         }
     }
 
-    fun subscribeToSensor(sensorName: String) {
+
+    fun updated(listOfSensors : Map<String, Boolean>) {
+
+        listOfSensors.filter {
+            it.value != _sensorsState.value?.get(it.key)
+        }.forEach {
+            toggleSubscription(it.key,it.value)
+        }
+       _sensorsState.value = listOfSensors
+    }
+
+    fun toggleSubscription(sensorName: String, subscribe : Boolean) {
         viewModelScope.launch {
-            val isSubscribed = sensorsState.value?.get(sensorName) == true
-            _sensorsState.postValue(_sensorsState.value!!.toMutableMap().apply {
-                this[sensorName] = !isSubscribed
-            })
-            if (isSubscribed) {
-                unSubscribeSensorUseCase(sensorName)
-            } else {
+
+            if (subscribe) {
+
+                newStreamForSensor = sensorName
                 subscribeSensorUseCase(sensorName)
+
+            } else {
+
+                unSubscribeSensorUseCase(sensorName)
+                _dataMap.value = _dataMap.value?.toMutableMap()?.apply {
+                    remove(sensorName)
+                }
             }
         }
     }
@@ -113,8 +112,8 @@ class MainViewModel @Inject constructor(
                     if (message is Result.Success) {
                         when (message.data) {
                             is Init -> {
-
-                                try {
+                                newStreamForSensor?.let {
+                                    message.data.sensorName = it
                                     Timber.d("init ${message.data.sensorName}")
                                     Timber.d("sensor config map ${sensorConfigMap}")
                                     Timber.d(
@@ -140,10 +139,8 @@ class MainViewModel @Inject constructor(
                                         )
                                         _dataMap.postValue(map)
                                     }
-
-                                } catch (e: Exception) {
-                                    Timber.e(e)
                                 }
+                                newStreamForSensor = null
                             }
                             is Update -> {
                                 Timber.d("update ${message.data.sensorName}")
@@ -207,6 +204,7 @@ class MainViewModel @Inject constructor(
         }
 
     }
+
 
     override fun onCleared() {
         viewModelScope.coroutineContext.cancelChildren()
