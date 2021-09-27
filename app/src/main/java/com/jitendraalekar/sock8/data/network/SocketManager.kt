@@ -1,15 +1,11 @@
 package com.jitendraalekar.sock8.data.network
 
-import com.google.gson.JsonObject
-import com.jitendraalekar.sock8.di.BASE_URL
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.isActive
 import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
@@ -23,15 +19,12 @@ class SocketManager @Inject constructor() : ISocketManager {
     @ExperimentalCoroutinesApi
     override fun connectToEvent(eventName: String) = callbackFlow {
 
-        val callback = object : Emitter.Listener {
-            override fun call(vararg args: Any?) {
-                args ?: return
-                try {
-                        println("socket id ${socket.id()}")
-                    (args[0] as? JSONObject)?.let { offer(it) }
-                } catch (t: Throwable) {
-                    Timber.d("Exception in offer $t")
-                }
+        val callback = Emitter.Listener { args ->
+            try {
+                println("socket id ${socket.id()}")
+                (args[0] as? JSONObject)?.let { offer(it) }
+            } catch (t: Throwable) {
+                Timber.d("Exception in offer $t")
             }
         }
 
@@ -93,6 +86,4 @@ class SocketManager @Inject constructor() : ISocketManager {
         Timber.d("Requesting removal of all listeners")
 
     }
-
-
 }

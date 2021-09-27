@@ -14,28 +14,27 @@ class ConnectSensorDataStreamUseCase @Inject constructor(
     private val repository: ISensorRepository,
     coroutineDispatcher: CoroutineDispatcher,
     private val gson: Gson,
-) : FlowUseCase<String, Message>(coroutineDispatcher) {
+) : FlowUseCase<Unit, Message>(coroutineDispatcher) {
 
 
-    override fun execute(parameters: String): Flow<Result<Message>> {
+    override fun execute(parameters: Unit): Flow<Result<Message>> {
         return repository.connectToDataStream()
             .map { jsonObj ->
                 val res = when (jsonObj.getString("type")) {
-                    "init" -> {
+                    INIT -> {
                         gson.fromJson(jsonObj.toString(), Init::class.java)
 
                     }
-                    "update" -> {
+                    UPDATE -> {
                         gson.fromJson(jsonObj.toString(), Update::class.java)
                     }
-                    "delete" -> {
+                    DELETE -> {
                         gson.fromJson(jsonObj.toString(), Delete::class.java)
 
                     }
-                    else -> throw IllegalStateException("Invalid data")
+                    else -> throw IllegalStateException("Invalid data $jsonObj")
                 }
                 Result.Success(res)
-
             }
     }
 

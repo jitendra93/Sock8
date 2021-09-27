@@ -2,6 +2,7 @@ package com.jitendraalekar.sock8.di
 
 import com.jitendraalekar.sock8.data.ISensorRepository
 import com.jitendraalekar.sock8.data.SensorRepositoryImpl
+import com.jitendraalekar.sock8.data.network.BASE_URL
 import com.jitendraalekar.sock8.data.network.ISocketManager
 import com.jitendraalekar.sock8.data.network.SensorService
 import com.jitendraalekar.sock8.data.network.SocketManager
@@ -16,7 +17,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-const val BASE_URL : String = "http://interview.optumsoft.com"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -38,6 +38,7 @@ abstract class NetworkModule {
         }
 
     }
+
     @Singleton
     @Binds
     abstract fun provideSocketManager(socketManager: SocketManager) : ISocketManager

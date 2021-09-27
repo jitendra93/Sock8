@@ -13,7 +13,7 @@ class Init(
     @SerializedName("minute")
     val minute: List<KeyValue>,
     var sensorName: String? = null
-) : Message( "init")
+) : Message( INIT)
 
 class Update(
     @SerializedName("key")
@@ -24,7 +24,7 @@ class Update(
     val sensorName: String,
     @SerializedName("scale")
     val scale: Scale
-) : Message("update")
+) : Message(UPDATE)
 
 class Delete(
     @SerializedName("key")
@@ -33,10 +33,8 @@ class Delete(
     val sensorName: String,
     @SerializedName("scale")
     val scale: Scale
-) : Message("delete"){
-    init {
-        assert(type == "delete")
-    }
+) : Message(DELETE){
+
 }
 
 
@@ -53,6 +51,8 @@ fun List<KeyValue>.asMap() : Map<Instant,Double>{
     return this.map {
         it.key to it.value
     }.toMap()
-
-
 }
+
+const val INIT = "init"
+const val DELETE = "delete"
+const val UPDATE = "update"

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flowOn
 import com.jitendraalekar.sock8.Result
 
 
-abstract class FlowUseCase<in P, R>(private val coroutineDispatcher: CoroutineDispatcher) {
+abstract class FlowUseCase<in P, R>( val coroutineDispatcher: CoroutineDispatcher) {
     operator fun invoke(parameters: P): Flow<Result<R>> = execute(parameters)
         .catch { e -> emit(Result.Error(Exception(e))) }
         .flowOn(coroutineDispatcher)

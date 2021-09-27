@@ -10,7 +10,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        applicationId "com.jitendraalekar.sock8"
+        applicationId "com.jitendraalekar.sock"
         minSdkVersion 28
         targetSdkVersion 30
         versionCode 1
@@ -64,11 +64,8 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
-    implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
-    kapt "androidx.room:room-compiler:$room_version"
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt 'com.google.dagger:hilt-compiler:2.37'
 
@@ -77,9 +74,11 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation 'com.github.bumptech.glide:glide:4.12.0'
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation ('io.socket:socket.io-client:2.0.1') {
         exclude group: 'org.json', module: 'json'
     }
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'}
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+
+}

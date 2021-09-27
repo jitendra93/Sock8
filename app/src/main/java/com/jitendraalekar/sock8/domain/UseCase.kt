@@ -6,7 +6,7 @@ import java.lang.Exception
 import com.jitendraalekar.sock8.Result
 import timber.log.Timber
 
-abstract class UseCase<in P, R> (private val coroutineDispatcher: CoroutineDispatcher){
+abstract class UseCase<in P, R> ( val coroutineDispatcher: CoroutineDispatcher){
 
     suspend  operator fun invoke(parameters : P) : Result<R>{
         return try {

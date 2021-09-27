@@ -1,4 +1,4 @@
-package com.jitendraalekar.sock8.data
+package com.jitendraalekar.sock8.data.network
 
 enum class SensorEvents() {
     DATA,
@@ -7,5 +7,4 @@ enum class SensorEvents() {
     override fun toString(): String {
         return this.name.lowercase()
     }
-
-   }
+}

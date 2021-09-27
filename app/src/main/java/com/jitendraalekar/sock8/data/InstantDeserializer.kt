@@ -20,5 +20,4 @@ class InstantDeserializer : JsonDeserializer<Instant> {
         val instant = Instant.ofEpochMilli( milliSinceEpoch )
         return instant
     }
-
 }
